@@ -31,10 +31,9 @@ export const getPlanById = async (req, res) => {
 
         if (await insuranceRedis.containsKey(key)) {
             const plan = await insuranceService.getPlan(key);
-            if (ifNoneMatch){
-                if (plan.eTag === ifNoneMatch) {
+            if (await insuranceRedis.getHashByKey(key) === ifNoneMatch){
+
                     res.status(304).send('Not Modified');
-                }
         }
         else {
             res.status(200).send(plan);
@@ -43,6 +42,19 @@ export const getPlanById = async (req, res) => {
     else {
         res.status(404).send('Plan not found');
     }
+
+}
+
+export const getAll = async(req, res) => {
+    const plans = await insuranceService.getAll();
+    // console.log(plans)
+    if (!plans || plans.length === 0) {
+        res.status(404).send('No plans found');
+    }
+    else{
+    res.status(200).send(plans);
+    }
+    
 
 }
 

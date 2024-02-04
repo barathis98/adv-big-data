@@ -20,15 +20,25 @@ export const  containsKey = async(key)=> {
 }
 
 export async function setHashToValue(key, strValue, etag) {
-  await client.hSet(key, strValue, etag);
+  await client.hSet(key,'eTag', etag);
+  await client.hSet(key, 'strValue', strValue);
 }
 
 export async function getHashByKey(key, field) {
-  return await hgetAsync(key, field);
+  return await client.hGet(key, 'eTag');
+}
+
+export async function getAll() {
+  const keys = await client.keys('*');
+  const result = [];
+  for (const key of keys) {
+    result.push(await client.hGet(key,'strValue'));
+  }
+  return result;
 }
 
 export async function getObj(key) {
-  return await client.hGetAll(key);
+  return await client.hGet(key, 'strValue');
 }
 
 export async function delObj(key) {

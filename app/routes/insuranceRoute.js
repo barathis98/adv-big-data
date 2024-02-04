@@ -9,6 +9,7 @@ insuranceRouter.route('/:objectId')
 
 insuranceRouter.route('/')
     .post(ic.postPlan)
+    .get(ic.getAll)
 
 insuranceRouter.route('*')
     .all((req, res) => {

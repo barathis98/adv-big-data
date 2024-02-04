@@ -13,6 +13,14 @@ export const getPlan = async (objectId) => {
     return await insuranceRedis.getObj(objectId);
 }
 
+export const getHashByKey = async (objectId) => {
+    return await insuranceRedis.getHashByKey(objectId, 'eTag');
+}
+
+export const getAll = async () => {
+    return await insuranceRedis.getAll();
+}
+
 export const deletePlan = async (objectId) => {
     return await insuranceRedis.delObj(objectId);
 }
