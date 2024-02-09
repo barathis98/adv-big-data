@@ -1,10 +1,11 @@
 import * as ic from '../controller/insurance-controller.js';
 import express from 'express';
+import { cache } from '../middleware/cache.js';
 
 const insuranceRouter = express.Router();
 
 insuranceRouter.route('/:objectId')
-    .get(ic.getPlanById)
+    .get(cache,ic.getPlanById)
     .delete(ic.deletePlan)
 
 insuranceRouter.route('/')

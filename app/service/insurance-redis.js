@@ -20,7 +20,7 @@ export const  containsKey = async(key)=> {
 }
 
 export async function setHashToValue(key, strValue, etag) {
-  await client.hSet(key,'eTag', etag);
+  // await client.hSet(key,'eTag', etag);
   await client.hSet(key, 'strValue', strValue);
 }
 

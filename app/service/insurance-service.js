@@ -5,6 +5,7 @@ export const postPlan = async (plan) => {
     const eTag = md5(JSON.stringify(plan));
     console.log("eTag: ", eTag);
     console.log("objectId:",plan.objectId)
+    console.log("plan:",JSON.stringify(plan))
     await insuranceRedis.setHashToValue(plan.objectId, JSON.stringify(plan), eTag);
     return eTag;
 };

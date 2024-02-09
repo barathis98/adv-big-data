@@ -27,17 +27,11 @@ export const postPlan = async (req, res,next) => {
 
 export const getPlanById = async (req, res) => {
     const key = req.params.objectId;
-    const ifNoneMatch = req.headers['if-none-match'];
 
         if (await insuranceRedis.containsKey(key)) {
             const plan = await insuranceService.getPlan(key);
-            if (await insuranceRedis.getHashByKey(key) === ifNoneMatch){
-
-                    res.status(304).send('Not Modified');
-        }
-        else {
+            // console.log("plan:",plan);
             res.status(200).send(plan);
-        }
     }
     else {
         res.status(404).send('Plan not found');
