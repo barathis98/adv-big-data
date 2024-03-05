@@ -7,13 +7,16 @@ export const postPlan = async (req, res,next) => {
     if (req.body === undefined || req.body === null) {
         res.status(400).send('Request body is empty');
     }
-    const key = req.body.objectId;
 
-    if (await insuranceRedis.containsKey(key)) {
-        res.status(409).send('Plan already exists');
-    }
-    else {
+
+
         if (await validateJsonObject(req.body)) {
+            const key = req.body.objectId;
+
+            if (await insuranceRedis.containsKey(key)) {
+                res.status(409).send('Plan already exists');
+                return;
+            }
 
         const eTag = await insuranceService.postPlan(req.body);
         res.setHeader('ETag', eTag);
@@ -22,7 +25,7 @@ export const postPlan = async (req, res,next) => {
         else {
             res.status(400).send('Invalid format');
         }
-    }
+    
 }
 
 export const getPlanById = async (req, res) => {
@@ -30,7 +33,6 @@ export const getPlanById = async (req, res) => {
 
         if (await insuranceRedis.containsKey(key)) {
             const plan = await insuranceService.getPlan(key);
-            // console.log("plan:",plan);
             res.status(200).send(plan);
     }
     else {
@@ -41,7 +43,6 @@ export const getPlanById = async (req, res) => {
 
 export const getAll = async(req, res) => {
     const plans = await insuranceService.getAll();
-    // console.log(plans)
     if (!plans || plans.length === 0) {
         res.status(404).send('No plans found');
     }

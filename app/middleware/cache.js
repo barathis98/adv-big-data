@@ -9,12 +9,10 @@ export const cache = async(req, res, next) => {
     const key = req.params.objectId;
     const plan = await insuranceService.getPlan(key);
     console.log("inside cache")
-    // console.log("plan: ", plan);
 
 
     if (await insuranceRedis.containsKey(key)) {
         console.log("inside cache1")
-        //  console.log("plan: ", JSON.stringify(plan));
         const calculatedeTag = md5(plan);
         console.log("calculatedeTag: ", calculatedeTag);
         console.log("eTag: ", eTag);

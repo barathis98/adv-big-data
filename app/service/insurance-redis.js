@@ -34,6 +34,7 @@ export async function getAll() {
   for (const key of keys) {
     result.push(await client.hGet(key,'strValue'));
   }
+  // console.log(result)
   return result;
 }
 
