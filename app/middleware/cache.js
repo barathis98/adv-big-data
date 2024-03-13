@@ -4,10 +4,10 @@ import * as insuranceService from '../service/insurance-service.js';
 
 
 
-export const cache = async(req, res, next) => {
+export const conditionalRead = async(req, res, next) => {
     const eTag = req.headers['if-none-match'];
     if (!eTag) {
-        console.log("No eTag present, proceeding...");
+        // console.log("No eTag present, proceeding...");
         return next();
     }
     const key = 'plan-'+req.params.objectId;
@@ -16,10 +16,10 @@ export const cache = async(req, res, next) => {
 
 
     if (await insuranceRedis.containsKey(key)) {
-        console.log("inside cache1")
+        // console.log("inside cache1")
         const calculatedeTag = md5(plan);
-        console.log("calculatedeTag: ", calculatedeTag);
-        console.log("eTag: ", eTag);
+        // console.log("calculatedeTag: ", calculatedeTag);
+        // console.log("eTag: ", eTag);
         if (eTag !== calculatedeTag) {
             return res.status(412).send({message: "Precondition Failed"});
         }
@@ -30,4 +30,24 @@ export const cache = async(req, res, next) => {
     }
 
     next();
-}        
+}  
+
+export const conditionalWrite = async (req, res, next) => {
+    const eTag = req.headers['if-match'];
+    if (!eTag) {
+        return next();
+    }
+
+    const key = 'plan-' + req.params.objectId;
+    const plan = await insuranceService.getPlan(key);
+
+    const calculatedETag = md5(plan);
+
+    if (eTag !== calculatedETag) {
+
+        return res.status(409).send({ message: "Conflict" });
+    }
+
+
+    next();
+}

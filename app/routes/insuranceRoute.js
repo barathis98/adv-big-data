@@ -1,13 +1,14 @@
 import * as ic from '../controller/insurance-controller.js';
 import express from 'express';
-import { cache } from '../middleware/cache.js';
+import {  conditionalRead } from '../middleware/cache.js';
+import {conditionalWrite} from '../middleware/cache.js'
 
 const insuranceRouter = express.Router();
 
 insuranceRouter.route('/:objectId')
-    .get(cache,ic.getPlanById)
+    .get(conditionalRead,ic.getPlanById)
     .delete(ic.deletePlan)
-    .patch(ic.patchPlan);
+    .patch(conditionalWrite,ic.patchPlan);
 
 insuranceRouter.route('/')
     .post(ic.postPlan)

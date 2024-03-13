@@ -39,6 +39,8 @@ export const getPlanById = async (req, res) => {
 
         if (await insuranceRedis.containsKey(key)) {
             const plan = await insuranceService.getPlan(key);
+            const eTag = md5(plan);
+            res.setHeader('ETag', eTag);
             res.status(200).send(plan);
     }
     else {
