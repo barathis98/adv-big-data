@@ -6,7 +6,11 @@ import * as insuranceService from '../service/insurance-service.js';
 
 export const cache = async(req, res, next) => {
     const eTag = req.headers['if-none-match'];
-    const key = req.params.objectId;
+    if (!eTag) {
+        console.log("No eTag present, proceeding...");
+        return next();
+    }
+    const key = 'plan-'+req.params.objectId;
     const plan = await insuranceService.getPlan(key);
     console.log("inside cache")
 
@@ -16,6 +20,9 @@ export const cache = async(req, res, next) => {
         const calculatedeTag = md5(plan);
         console.log("calculatedeTag: ", calculatedeTag);
         console.log("eTag: ", eTag);
+        if (eTag !== calculatedeTag) {
+            return res.status(412).send({message: "Precondition Failed"});
+        }
         if (calculatedeTag === eTag) {
             res.status(304).send('Not Modified');
             return;

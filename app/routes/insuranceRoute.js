@@ -7,6 +7,7 @@ const insuranceRouter = express.Router();
 insuranceRouter.route('/:objectId')
     .get(cache,ic.getPlanById)
     .delete(ic.deletePlan)
+    .patch(ic.patchPlan);
 
 insuranceRouter.route('/')
     .post(ic.postPlan)
