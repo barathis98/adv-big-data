@@ -35,7 +35,7 @@ export const conditionalRead = async(req, res, next) => {
 export const conditionalWrite = async (req, res, next) => {
     const eTag = req.headers['if-match'];
     if (!eTag) {
-        return next();
+        return res.status(412).send({message: "Etag Missing"});
     }
 
     const key = 'plan-' + req.params.objectId;
@@ -45,7 +45,7 @@ export const conditionalWrite = async (req, res, next) => {
 
     if (eTag !== calculatedETag) {
 
-        return res.status(409).send({ message: "Conflict" });
+        return res.status(412).send({message: "Precondition Failed"});
     }
 
 

@@ -77,6 +77,8 @@ export const deletePlan = async (req, res) => {
 
 export const patchPlan = async(req,res) => {
     const key = 'plan-'+req.params.objectId;
+    if (await validateJsonObject(req.body)) {
+
     if (await insuranceRedis.containsKey(key)) {
         let plan = await insuranceService.getPlan(key);
         console.log("plan",plan)
@@ -95,5 +97,9 @@ export const patchPlan = async(req,res) => {
     else {
         res.status(404).send('Plan not found');
     }
+}
+else {
+    res.status(400).send('Invalid format');
+}
 
 }
