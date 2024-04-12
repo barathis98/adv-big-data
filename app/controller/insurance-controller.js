@@ -2,6 +2,7 @@ import { validateJsonObject } from '../utils/schemaValidator.js';
 import * as insuranceService from '../service/insurance-service.js';   
 import * as insuranceRedis from '../service/insurance-redis.js';
 import md5 from 'md5';
+import { sendMessage } from '../utils/sender.js';
 
 
 export const postPlan = async (req, res,next) => {
@@ -26,6 +27,7 @@ export const postPlan = async (req, res,next) => {
 
         const eTag = await insuranceService.postPlan(req.body);
         res.setHeader('ETag', eTag);
+        await sendMessage('Hello', 'POST', req.body);
         res.status(201).send('Plan created');
         }
         else {
@@ -67,6 +69,7 @@ export const deletePlan = async (req, res) => {
     if (await insuranceRedis.containsKey(key)) {
         const plan = await insuranceService.getPlan(key);
         const rootNode = JSON.parse(plan);
+        await sendMessage('Hello', 'DELETE', plan);
         await insuranceService.deletePlan(rootNode);
         res.status(204).send('Plan deleted');
     }
@@ -87,6 +90,7 @@ export const patchPlan = async(req,res) => {
             const updatedPlan = req.body;
 
            const eTag =  await insuranceService.updatePlan(updatedPlan,plan);
+            await sendMessage('Hello', 'POST', updatedPlan);
            res.setHeader('ETag', eTag);
         }
         else {
