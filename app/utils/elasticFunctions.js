@@ -68,8 +68,6 @@ let  indexMapping = {
 export async function establishElasticConnection() {
   try {
     const port = 9200;
-    const crtFilePath = '/Users/barathisridhar/http_ca.crt';
-    const certificate = fs.readFileSync('../../http_ca.crt');
     const index = 'insurance';
 
     esClient = new Client({
@@ -109,13 +107,11 @@ async function createIndex(indexName) {
   }
 
 
-
-
 export async function save(index, plan) {
   try {
     mapOfDocuments = new Map();
     convertMapToDocumentIndex(plan, "", "plan");
-    // console.log("map of documents",mapOfDocuments);
+    console.log("map of documents",mapOfDocuments);
 
     for (let [key, value] of mapOfDocuments.entries()) {
       const keyParts = key.split(':');
@@ -130,7 +126,6 @@ export async function save(index, plan) {
       };
 
        const { body: indexResponse } = await esClient.index(indexRequest);
-      // console.log(`response id: ${indexResponse._id}, parent id: ${parentId}`);
     }
   } catch (error) {
     console.error('Failed to post document:', error);
@@ -141,7 +136,6 @@ export async function deleteDocument(index,json) {
   try {
     const jsonObject = JSON.parse(json);
     console.log("inside delete document");
-    // console.log("jsonObject",jsonObject);
     convertToKeys(jsonObject);
   
     for (const key of listOfKeys) {
@@ -205,9 +199,6 @@ function convertMapToDocumentIndex(jsonObject, parentId, objectName) {
   for (let key of Object.keys(jsonObject)) {
     let redisKey = jsonObject['objectType'] + ":" + parentId;
     let value = jsonObject[key];
-    console.log("key",key);
-    console.log("value",value);
-    console.log("redisKey",redisKey);
 
     if (value instanceof Object && !Array.isArray(value)) {
       convertMapToDocumentIndex(value, jsonObject['objectId'].toString(), key);
@@ -229,7 +220,6 @@ function convertMapToDocumentIndex(jsonObject, parentId, objectName) {
   }
 
   let id = parentId + ":" + jsonObject['objectId'].toString();
-  // console.log(valueMap);
   mapOfDocuments.set(id, valueMap);
 
   return map;
